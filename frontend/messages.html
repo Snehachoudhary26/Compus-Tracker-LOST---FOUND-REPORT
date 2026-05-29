@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#FF8A26">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages — CampusTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--primary:#FF8A26;--primary-dark:#e67300;--primary-light:#FFA94D;--accent:#FFC84D;--border:#FFE0B2;--border2:#f0f0f0;--text:#1a1a2e;--text2:#5a5a7a;--text3:#9090aa;--bg:#FAFAFA;--green:#22c55e;}
+html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;color:var(--text);}
+
+/* NAVBAR */
+.navbar{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:#fff;border-bottom:1px solid var(--border);flex-shrink:0;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.nav-logo-text{font-size:1.15rem;font-weight:800;background:linear-gradient(135deg,var(--primary-dark),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:2px;list-style:none;}
+.nav-links a{padding:.45rem .85rem;font-size:.875rem;font-weight:500;color:var(--text2);text-decoration:none;border-radius:8px;transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--primary);background:#FFF3E0;}
+#navUser{display:flex;align-items:center;gap:.75rem;}
+.btn-nav-outline{padding:.45rem 1.1rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-nav-outline:hover{border-color:var(--primary);color:var(--primary);}
+.btn-nav-primary{padding:.45rem 1.2rem;border:none;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.nav-user-info{display:flex;align-items:center;gap:.5rem;font-size:.875rem;font-weight:600;}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.875rem;color:#fff;}
+.btn-logout{padding:.35rem .8rem;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:inherit;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:1.5px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;}
+.hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;}
+@media(max-width:900px){.nav-links{display:none;}.hamburger{display:flex;}}
+
+/* SHELL */
+.shell{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 68px);overflow:hidden;background:#fff;}
+
+/* SIDEBAR */
+.sidebar{border-right:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden;background:#fff;}
+.s-head{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border2);}
+.s-title{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:.85rem;display:flex;justify-content:space-between;align-items:center;}
+.new-btn{background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.new-btn:hover{transform:scale(1.1);}
+.s-search{display:flex;align-items:center;gap:.5rem;background:var(--bg);border:1.5px solid var(--border2);border-radius:10px;padding:.5rem .85rem;}
+.s-search input{border:none;background:none;outline:none;font-size:.875rem;color:var(--text);font-family:inherit;width:100%;}
+.s-label{padding:.75rem 1.25rem .35rem;font-size:.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;}
+.conv-list{flex:1;overflow-y:auto;}
+.conv-item{display:flex;align-items:center;gap:.75rem;padding:.85rem 1.25rem;cursor:pointer;border-bottom:1px solid var(--border2);transition:background .15s;}
+.conv-item:hover{background:#FFF8F0;}
+.conv-item.active{background:#FFF3E0;border-left:3px solid var(--primary);padding-left:calc(1.25rem - 3px);}
+.conv-item.active .conv-name{color:var(--primary);}
+.conv-avi{position:relative;flex-shrink:0;}
+.conv-avi img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--border2);}
+.conv-avi-letter{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;color:#fff;}
+.online-dot{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:var(--green);border:2.5px solid #fff;}
+.conv-info{flex:1;min-width:0;}
+.conv-name{font-size:.875rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:.4rem;}
+.conv-pill{font-size:.7rem;font-weight:700;color:var(--primary);background:#FFF3E0;border:1px solid var(--border);padding:.1rem .45rem;border-radius:20px;flex-shrink:0;}
+.conv-prev{font-size:.78rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.15rem;}
+.conv-meta{display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;flex-shrink:0;}
+.conv-time{font-size:.7rem;color:var(--text3);}
+.unread-badge{background:var(--primary);color:#fff;font-size:.65rem;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+/* CHAT PANEL */
+.chat-panel{display:flex;flex-direction:column;background:var(--bg);overflow:hidden;}
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text2);text-align:center;padding:2rem;}
+.chat-empty-icon{font-size:4rem;margin-bottom:1rem;opacity:.3;}
+.chat-empty h3{font-size:1.1rem;font-weight:700;margin-bottom:.3rem;}
+.chat-empty p{font-size:.875rem;}
+
+/* CHAT HEAD */
+.chat-head{padding:.85rem 1.5rem;background:#fff;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.chat-head-left{display:flex;align-items:center;gap:.85rem;}
+.head-avi{position:relative;}
+.head-avi img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--border2);}
+.head-ondot{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:var(--green);border:2.5px solid #fff;}
+.chat-head-name{font-size:1rem;font-weight:800;color:var(--text);}
+.chat-head-status{font-size:.78rem;color:var(--green);font-weight:500;margin-top:.1rem;}
+.chat-head-actions{display:flex;gap:.5rem;align-items:center;}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border2);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;color:var(--text2);}
+.icon-btn:hover{border-color:var(--primary);color:var(--primary);background:#FFF3E0;}
+.ai-toggle-btn{background:#FFF3E0;border:1.5px solid var(--border);color:var(--primary-dark);padding:.4rem .9rem;border-radius:20px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+.ai-toggle-btn:hover{background:#FFE0B2;}
+.share-btn{background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;color:#fff;padding:.45rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 2px 8px rgba(255,138,38,.3);}
+.share-btn:hover{transform:translateY(-1px);}
+
+/* PRIVACY BAR */
+.privacy-bar{padding:.5rem 1.5rem;background:#FFF8E1;border-bottom:1px solid #FFC84D;font-size:.78rem;color:#713f12;display:flex;align-items:center;gap:.5rem;flex-shrink:0;}
+.dismiss-btn{background:none;border:1px solid #FFC84D;color:#713f12;padding:.2rem .65rem;border-radius:20px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;margin-left:auto;}
+
+/* MESSAGES */
+.msgs{flex:1;overflow-y:auto;padding:1rem 1.5rem;display:flex;flex-direction:column;gap:.6rem;min-height:0;}
+.date-divider{text-align:center;font-size:.72rem;color:var(--text3);display:flex;align-items:center;gap:.75rem;margin:.25rem 0;}
+.date-divider::before,.date-divider::after{content:'';flex:1;height:1px;background:var(--border2);}
+.msg-group{display:flex;flex-direction:column;gap:.25rem;}
+.msg-group.sent{align-items:flex-end;}
+.msg-group.recv{align-items:flex-start;}
+.msg-row{display:flex;align-items:flex-end;gap:.5rem;}
+.msg-row.sent{flex-direction:row-reverse;}
+.msg-avi img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.msg-avi-letter{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bubble{max-width:72%;padding:.55rem .9rem;border-radius:16px;font-size:.875rem;line-height:1.5;}
+.recv .bubble{background:#fff;color:var(--text);border:1px solid var(--border2);border-bottom-left-radius:3px;}
+.sent .bubble{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border-bottom-right-radius:3px;}
+.msg-time{font-size:.65rem;color:var(--text3);padding:0 .3rem;}
+.sent .msg-time{text-align:right;}
+
+/* AI MESSAGE */
+.ai-msg-wrap{display:flex;flex-direction:column;gap:.2rem;align-items:flex-start;}
+.ai-label{font-size:.7rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;padding-left:2px;}
+.ai-bubble-msg{background:#FFF8F0;border:1.5px solid var(--border);border-radius:12px;border-bottom-left-radius:3px;padding:.6rem .9rem;font-size:.85rem;color:var(--text2);line-height:1.55;max-width:75%;}
+
+/* CONTACT CARD */
+.contact-card-wrap{display:flex;flex-direction:column;gap:.2rem;align-items:flex-start;}
+.contact-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1rem 1.25rem;max-width:260px;}
+.contact-card-head{font-size:.78rem;font-weight:700;color:var(--primary);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.06em;}
+.contact-row{display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:var(--text2);margin-bottom:.4rem;}
+.contact-val{font-weight:700;color:var(--text);font-size:.82rem;}
+.contact-save-btn{width:100%;margin-top:.75rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;color:#fff;padding:.6rem;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+.contact-save-btn:hover{transform:translateY(-1px);}
+
+/* TYPING */
+.typing-wrap{display:flex;align-items:flex-end;gap:.5rem;}
+.typing-bubble{background:#fff;border:1px solid var(--border2);border-radius:14px;border-bottom-left-radius:3px;padding:.55rem .9rem;display:flex;gap:.3rem;align-items:center;}
+.dot{width:6px;height:6px;background:#ccc;border-radius:50%;animation:blink .9s infinite;}
+.dot:nth-child(2){animation-delay:.15s;}.dot:nth-child(3){animation-delay:.3s;}
+@keyframes blink{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+
+/* INPUT BAR */
+.chat-input-bar{padding:.85rem 1.5rem;background:#fff;border-top:1px solid var(--border2);display:flex;gap:.65rem;align-items:center;flex-shrink:0;}
+.input-wrap{flex:1;background:var(--bg);border:1.5px solid var(--border2);border-radius:24px;padding:.55rem 1.1rem;display:flex;align-items:center;transition:all .2s;}
+.input-wrap:focus-within{border-color:var(--primary);background:#FFF8F0;}
+.input-wrap input{border:none;background:none;outline:none;font-size:.9rem;color:var(--text);font-family:inherit;width:100%;}
+.btn-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 2px 8px rgba(255,138,38,.3);}
+.btn-send:hover{transform:scale(1.08);}
+
+/* AI PANEL */
+.ai-panel{display:none;flex-direction:column;width:320px;border-left:1px solid var(--border2);background:#FFF8F0;overflow:hidden;flex-shrink:0;}
+.ai-panel.open{display:flex;}
+.ai-panel-head{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#FFF3E0;}
+.ai-panel-title{font-size:.95rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:.5rem;}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.close-ai-btn{background:none;border:1.5px solid var(--border);color:var(--text3);font-size:.875rem;cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.close-ai-btn:hover{border-color:var(--primary);color:var(--primary);}
+.ai-messages{flex:1;padding:1rem;display:flex;flex-direction:column;gap:.75rem;overflow-y:auto;}
+.ai-chip{background:#fff;border:1.5px solid var(--border2);border-radius:10px;padding:.65rem .9rem;font-size:.82rem;color:var(--text2);cursor:pointer;transition:all .2s;font-family:inherit;text-align:left;width:100%;line-height:1.5;font-weight:500;}
+.ai-chip:hover{border-color:var(--primary);color:var(--primary);background:#FFF3E0;}
+.ai-response{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;font-size:.82rem;color:var(--text2);line-height:1.6;}
+.ai-question{background:#FFF3E0;border:1px solid var(--border);border-radius:10px;padding:.6rem .9rem;font-size:.82rem;color:var(--primary-dark);text-align:right;}
+.ai-input-row{padding:.85rem 1rem;border-top:1px solid var(--border2);display:flex;gap:.5rem;background:#fff;flex-shrink:0;}
+.ai-input{flex:1;border:1.5px solid var(--border2);border-radius:8px;padding:.55rem .85rem;font-size:.85rem;font-family:inherit;outline:none;color:var(--text);}
+.ai-input:focus{border-color:var(--primary);}
+.ai-send-btn{background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:.875rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:2000;align-items:center;justify-content:center;padding:1.5rem;}
+.modal-overlay.active{display:flex;}
+.modal-box{background:#fff;border-radius:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.15);animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);}
+@keyframes modalIn{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;background:#f5f5f5;border:none;border-radius:50%;font-size:1rem;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:5;}
+.modal-close:hover{background:#ffe0e0;color:#e53e3e;transform:rotate(90deg);}
+.modal-head{padding:2rem 2rem 1.5rem;border-bottom:1px solid var(--border2);}
+.modal-head h2{font-size:1.5rem;font-weight:800;margin-bottom:.3rem;color:var(--text);}
+.modal-head p{font-size:.875rem;color:var(--text2);}
+.modal-body{padding:1.75rem 2rem 2rem;}
+.mform-group{margin-bottom:1.1rem;}
+.mform-group label{display:block;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em;}
+.mform-control{width:100%;padding:.72rem 1rem;background:#FAFAFA;border:1.5px solid var(--border2);border-radius:10px;font-size:.925rem;font-family:inherit;color:var(--text);transition:all .2s;appearance:none;}
+.mform-control:focus{outline:none;border-color:var(--primary);background:#FFF8F0;box-shadow:0 0 0 3px rgba(255,138,38,.12);}
+select.mform-control{cursor:pointer;}
+.btn-modal-submit{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;border-radius:10px;font-size:.975rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:.5rem;}
+.btn-modal-submit:hover{transform:translateY(-2px);}
+.modal-link{display:block;text-align:center;color:var(--primary);font-size:.875rem;font-weight:600;margin-top:1rem;text-decoration:none;cursor:pointer;}
+.ct-toast{position:fixed;top:80px;right:1.5rem;padding:.8rem 1.25rem;border-radius:12px;font-size:.875rem;font-weight:600;color:#fff;z-index:9999;transform:translateX(calc(100% + 2rem));transition:transform .4s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:.5rem;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.15);}
+.ct-toast.show{transform:translateX(0);}
+.ct-toast--success{background:linear-gradient(135deg,#00d4aa,#00b890);}
+.ct-toast--error{background:linear-gradient(135deg,#ff6b6b,#ee5555);}
+
+@media(max-width:700px){
+  .shell{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .ai-panel{display:none!important;}
+}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🎯</div>
+    <span class="nav-logo-text">CampusTracker</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="lost.html">Lost Items</a></li>
+    <li><a href="found.html">Found Items</a></li>
+    <li><a href="match.html">Match</a></li>
+    <li><a href="messages.html" class="active">Messages</a></li>
+    <li><a href="admin.html">Admin</a></li>
+  </ul>
+  <div id="navUser"></div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</header>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="s-head">
+      <div class="s-title">
+        Messages
+        <button class="new-btn" title="New chat">+</button>
+      </div>
+      <div class="s-search">
+        <span style="color:var(--text3);font-size:.9rem;">🔍</span>
+        <input type="text" placeholder="Search conversations…" oninput="filterConvs(this.value)">
+      </div>
+    </div>
+    <div class="s-label">AI Assistant</div>
+    <div class="conv-list" id="convList">
+      <div class="conv-item" data-id="ai" onclick="openAI();setActive('ai')">
+        <div class="conv-avi"><div class="conv-avi-letter" style="background:linear-gradient(135deg,#FF8A26,#FFC84D);">AI</div></div>
+        <div class="conv-info">
+          <div class="conv-name">CampusTracker AI <span class="conv-pill">Smart</span></div>
+          <div class="conv-prev">Ask me about lost & found items</div>
+        </div>
+      </div>
+      <div class="s-label" style="padding-top:.5rem;">Conversations</div>
+    </div>
+  </aside>
+
+  <!-- CHAT PANEL -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-empty" id="chatEmpty">
+      <div class="chat-empty-icon">💬</div>
+      <h3>Select a conversation</h3>
+      <p>Choose someone from the left to start chatting</p>
+    </div>
+  </div>
+
+  <!-- AI PANEL -->
+  <div class="ai-panel" id="aiPanel">
+    <div class="ai-panel-head">
+      <div class="ai-panel-title"><div class="ai-dot"></div> CampusTracker AI</div>
+      <button class="close-ai-btn" onclick="document.getElementById('aiPanel').classList.remove('open')">×</button>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-response"><strong>Hi! I'm your CampusTracker AI.</strong> I can help you with lost & found items. Try asking:</div>
+      <button class="ai-chip" onclick="askAI('How do I find my lost item?')">How do I find my lost item?</button>
+      <button class="ai-chip" onclick="askAI('Is it safe to share contact?')">Is it safe to share contact?</button>
+      <button class="ai-chip" onclick="askAI('What details help with matching?')">What details help with matching?</button>
+      <button class="ai-chip" onclick="askAI('How long are items kept?')">How long are items kept?</button>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="aiInput" type="text" placeholder="Ask AI anything…" onkeydown="if(event.key==='Enter')askAI()">
+      <button class="ai-send-btn" onclick="askAI()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('loginModal')">×</button>
+    <div class="modal-head"><h2>Welcome back 👋</h2><p>Sign in to your account</p></div>
+    <div class="modal-body">
+      <form onsubmit="handleLogin(event)">
+        <div class="mform-group"><label>Email</label><input class="mform-control" type="email" id="loginEmail" placeholder="you@campus.edu" required></div>
+        <div class="mform-group"><label>Password</label><input class="mform-control" type="password" id="loginPassword" placeholder="••••••••" required minlength="6"></div>
+        <div class="mform-group"><label>Role</label><select class="mform-control" id="loginRole" required><option value="">Select role</option><option>Student</option><option>Teacher</option><option>Staff</option><option>Worker</option></select></div>
+        <button type="submit" class="btn-modal-submit">Log In →</button>
+        <a class="modal-link" onclick="closeModal('loginModal');openModal('signupModal')">Don't have an account? Sign up</a>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="signupModal" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('signupModal')">×</button>
+    <div class="modal-head"><h2>Create account ✨</h2><p>Join CampusTracker free</p></div>
+    <div class="modal-body">
+      <form onsubmit="handleSignup(event)">
+        <div class="mform-group"><label>Full Name</label><input class="mform-control" type="text" id="signupName" placeholder="John Doe" required minlength="3"></div>
+        <div class="mform-group"><label>Email</label><input class="mform-control" type="email" id="signupEmail" placeholder="you@campus.edu" required></div>
+        <div class="mform-group"><label>Password</label><input class="mform-control" type="password" id="signupPassword" placeholder="Min. 6 characters" required minlength="6"></div>
+        <div class="mform-group"><label>Role</label><select class="mform-control" id="signupRole" required><option value="">Select role</option><option>Student</option><option>Teacher</option><option>Staff</option><option>Worker</option></select></div>
+        <button type="submit" class="btn-modal-submit">Create Account →</button>
+        <a class="modal-link" onclick="closeModal('signupModal');openModal('loginModal')">Already have an account? Log in</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script>
+document.getElementById('hamburger').addEventListener('click',()=>{const nl=document.querySelector('.nav-links');nl.style.display=nl.style.display==='flex'?'none':'flex';});
+
+const PEOPLE = {
+  priya: { name:'Priya Sharma', role:'Student', score:'92%', img:'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=100&q=80', online:true, contact:{phone:'+91 98765 43210', email:'priya.sharma@campus.edu', location:'Block A, Girls Hostel'} },
+  arjun: { name:'Arjun Mehta', role:'Student', score:'88%', img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80', online:true, contact:{phone:'+91 87654 32109', email:'arjun.mehta@campus.edu', location:'Block C, Boys Hostel'} },
+  rahul: { name:'Rahul Verma', role:'Teacher', score:'79%', img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80', online:false, contact:{phone:'+91 76543 21098', email:'rahul.verma@campus.edu', location:'Faculty Building, Room 204'} },
+  kavya: { name:'Kavya Reddy', role:'Staff', score:'85%', img:'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&q=80', online:false, contact:{phone:'+91 65432 10987', email:'kavya.reddy@campus.edu', location:'Admin Block'} },
+};
+
+const DEFAULT_MSGS = {
+  priya: [
+    {type:'date',text:'Today'},
+    {type:'recv',text:"Hi! I found a blue backpack near the library. Is it yours?",time:'10:22 AM'},
+    {type:'sent',text:"Hi Priya! Can you describe it more?",time:'10:24 AM'},
+    {type:'recv',text:"It has a laptop compartment, red zipper pull, and some textbooks inside.",time:'10:25 AM'},
+    {type:'ai',text:"This looks like a strong match! The details align well. Consider sharing contact to arrange pickup."},
+    {type:'sent',text:"That sounds exactly like mine! Where can we meet?",time:'10:27 AM'},
+    {type:'recv',text:"Library entrance tomorrow at 3 PM?",time:'10:29 AM'},
+  ],
+  arjun: [
+    {type:'date',text:'Today'},
+    {type:'recv',text:"Found a black wallet near the cafeteria. Anyone missing this?",time:'9:10 AM'},
+    {type:'sent',text:"Hey Arjun! I lost mine yesterday. What does it look like?",time:'9:12 AM'},
+    {type:'recv',text:"Black leather, has a student ID card inside.",time:'9:13 AM'},
+    {type:'sent',text:"That's mine! Thank you so much for finding it!",time:'9:15 AM'},
+  ],
+  rahul: [
+    {type:'date',text:'Yesterday'},
+    {type:'recv',text:"Found a set of keys near the CSE department. Anyone missing them?",time:'4:00 PM'},
+    {type:'sent',text:"Sir, I lost my keys yesterday! Are there 3 keys on a blue keychain?",time:'4:05 PM'},
+    {type:'recv',text:"Yes exactly! Blue keychain with 3 keys.",time:'4:07 PM'},
+    {type:'ai',text:"This matches your lost item report. Share contact to coordinate pickup."},
+  ],
+  kavya: [
+    {type:'date',text:'Monday'},
+    {type:'recv',text:"Hi, found a water bottle near the gym. Pink colour with stickers."},
+    {type:'sent',text:"That might be mine! It has mountain stickers on it?"},
+    {type:'recv',text:"Yes exactly! Come to the admin block to collect it."},
+  ],
+};
+
+let chatHistories = JSON.parse(JSON.stringify(DEFAULT_MSGS));
+let currentChat = null;
+
+function buildConvList(){
+  const list = document.getElementById('convList');
+  const items = Object.entries(PEOPLE).map(([id,p])=>`
+    <div class="conv-item" data-id="${id}" onclick="openChat('${id}')">
+      <div class="conv-avi">
+        <img src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="conv-avi-letter" style="display:none">${p.name.charAt(0)}</div>
+        ${p.online?'<div class="online-dot"></div>':''}
+      </div>
+      <div class="conv-info">
+        <div class="conv-name">${p.name} <span class="conv-pill">${p.score}</span></div>
+        <div class="conv-prev" id="prev-${id}">${(chatHistories[id]||[]).filter(m=>m.type!=='date'&&m.type!=='ai').slice(-1)[0]?.text||'Start conversation'}</div>
+      </div>
+      <div class="conv-meta">
+        <div class="conv-time">${id==='priya'?'2m':id==='arjun'?'1h':id==='rahul'?'Yesterday':'Mon'}</div>
+        ${id==='priya'?'<div class="unread-badge">2</div>':''}
+      </div>
+    </div>`).join('');
+  list.insertAdjacentHTML('beforeend', items);
+}
+
+function setActive(id){
+  document.querySelectorAll('.conv-item').forEach(c=>c.classList.remove('active'));
+  const el=document.querySelector(`.conv-item[data-id="${id}"]`);
+  if(el){el.classList.add('active');const ub=el.querySelector('.unread-badge');if(ub)ub.remove();}
+}
+
+function openChat(id){
+  currentChat=id;setActive(id);
+  const p=PEOPLE[id];
+  document.getElementById('chatPanel').innerHTML=`
+    <div class="chat-head">
+      <div class="chat-head-left">
+        <div class="head-avi">
+          <img src="${p.img}" alt="${p.name}" onerror="this.outerHTML='<div class=\\'conv-avi-letter\\'>${p.name.charAt(0)}</div>'">
+          ${p.online?'<div class="head-ondot"></div>':''}
+        </div>
+        <div>
+          <div class="chat-head-name">${p.name}</div>
+          <div class="chat-head-status">${p.online?'● Active now':'● Last seen recently'} · <span style="color:var(--primary);font-weight:700">${p.score} match</span></div>
+        </div>
+      </div>
+      <div class="chat-head-actions">
+        <button class="icon-btn" title="Profile">👤</button>
+        <button class="icon-btn" title="Call" onclick="showToast('Voice calling coming soon!','success')">📞</button>
+        <button class="ai-toggle-btn" onclick="document.getElementById('aiPanel').classList.toggle('open')">🤖 AI Assistant</button>
+        <button class="share-btn" onclick="shareContact('${id}')">Share Contact</button>
+      </div>
+    </div>
+    <div class="privacy-bar">
+      🔒 <strong>Privacy Protected.</strong> Contact info is hidden until you choose to share it.
+      <button class="dismiss-btn" onclick="this.parentElement.style.display='none'">Got it</button>
+    </div>
+    <div class="msgs" id="msgsArea"></div>
+    <div class="chat-input-bar">
+      <div class="input-wrap">
+        <input type="text" id="chatInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg('${id}')">
+      </div>
+      <button class="btn-send" onclick="sendMsg('${id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>`;
+  renderMsgs(id);
+}
+
+function renderMsgs(id){
+  const p=PEOPLE[id];
+  const area=document.getElementById('msgsArea');
+  if(!area)return;
+  const msgs=chatHistories[id]||[];
+  area.innerHTML=msgs.map(m=>{
+    if(m.type==='date')return`<div class="date-divider">${m.text}</div>`;
+    if(m.type==='sent')return`<div class="msg-group sent"><div class="msg-row sent"><div class="bubble sent">${m.text}</div></div><div class="msg-time">${m.time||'Just now'}</div></div>`;
+    if(m.type==='recv')return`<div class="msg-group recv"><div class="msg-row recv"><div class="msg-avi"><img src="${p.img}" alt="${p.name}" onerror="this.outerHTML='<div class=\\'msg-avi-letter\\'>${p.name.charAt(0)}</div>'"></div><div class="bubble recv">${m.text}</div></div><div class="msg-time">${m.time||''}</div></div>`;
+    if(m.type==='ai')return`<div class="ai-msg-wrap"><div class="ai-label">🤖 AI Assistant</div><div class="ai-bubble-msg">${m.text}</div></div>`;
+    if(m.type==='contact')return`<div class="contact-card-wrap"><div class="contact-card"><div class="contact-card-head">📋 Contact Shared</div><div class="contact-row"><span>📞</span><span class="contact-val">${p.contact.phone}</span></div><div class="contact-row"><span>✉️</span><span class="contact-val">${p.contact.email}</span></div><div class="contact-row"><span>📍</span><span class="contact-val">${p.contact.location}</span></div><button class="contact-save-btn" onclick="this.textContent='Saved ✓';this.style.background='#22c55e';this.disabled=true">Save Contact ✓</button></div></div>`;
+    return'';
+  }).join('');
+  area.scrollTop=area.scrollHeight;
+}
+
+function sendMsg(id){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();if(!text)return;
+  if(!chatHistories[id])chatHistories[id]=[];
+  chatHistories[id].push({type:'sent',text,time:'Just now'});
+  const prev=document.getElementById('prev-'+id);if(prev)prev.textContent=text;
+  input.value='';renderMsgs(id);
+  const area=document.getElementById('msgsArea');
+  if(area){
+    const typing=document.createElement('div');
+    typing.className='typing-wrap';typing.id='typingEl';
+    const p=PEOPLE[id];
+    typing.innerHTML=`<div class="msg-avi"><img src="${p.img}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'"></div><div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+    area.appendChild(typing);area.scrollTop=area.scrollHeight;
+    setTimeout(()=>{
+      typing.remove();
+      const replies=['See you there! 😊','Thanks for the quick response!','Let me know if you need anything else.','Happy to help return it!','Great, I\'ll be there!'];
+      chatHistories[id].push({type:'recv',text:replies[Math.floor(Math.random()*replies.length)],time:'Just now'});
+      renderMsgs(id);
+    },1600);
+  }
+}
+
+function shareContact(id){
+  if(!chatHistories[id])chatHistories[id]=[];
+  chatHistories[id].push({type:'contact'});
+  renderMsgs(id);
+  showToast('Contact shared successfully! 🎉','success');
+}
+
+function filterConvs(q){
+  document.querySelectorAll('.conv-item[data-id]').forEach(c=>{
+    const name=c.querySelector('.conv-name').textContent.toLowerCase();
+    c.style.display=name.includes(q.toLowerCase())?'flex':'none';
+  });
+}
+
+function openAI(){document.getElementById('aiPanel').classList.add('open');}
+
+const AI_ANSWERS = {
+  'How do I find my lost item?':'1. Report it on the <strong>Lost Items</strong> page with detailed description.\n2. Check the <strong>Match</strong> page for found items.\n3. Enable notifications to get alerted when found.\n4. Contact finders directly through messages.',
+  'Is it safe to share contact?':'Only share contact when you\'re confident about the person. Use the <strong>Share Contact</strong> button which creates a secure card. Meet in a <strong>public campus area</strong> for item handoff.',
+  'What details help with matching?':'Include: <strong>Item color, brand, size</strong>, location where lost, <strong>unique identifying marks</strong>, date lost, and a clear photo if possible.',
+  'How long are items kept?':'Found items are typically kept for <strong>30 days</strong> at the campus lost & found office. After that, unclaimed items may be donated. Act quickly!',
+};
+
+function askAI(q){
+  const input=document.getElementById('aiInput');
+  const question=q||input.value.trim();
+  if(!question)return;
+  const msgs=document.getElementById('aiMessages');
+  const qEl=document.createElement('div');qEl.className='ai-question';qEl.textContent=question;msgs.appendChild(qEl);
+  const aEl=document.createElement('div');aEl.className='ai-response';
+  aEl.innerHTML=AI_ANSWERS[question]||'Based on campus data, I recommend filing a detailed report with photos and checking the match section regularly. Most items are found within 48 hours!';
+  msgs.appendChild(aEl);msgs.scrollTop=msgs.scrollHeight;
+  if(input)input.value='';
+}
+
+async function handleLogin(e){e.preventDefault();const email=document.getElementById('loginEmail').value.trim();const pw=document.getElementById('loginPassword').value;const role=document.getElementById('loginRole').value;if(!role)return showToast('Please select your role.','error');try{const data=await apiLogin(email,pw,role);showToast('Welcome back, '+data.user.name+'!','success');closeModal('loginModal');e.target.reset();updateNavUser();}catch(err){showToast(err.message,'error');}}
+async function handleSignup(e){e.preventDefault();const name=document.getElementById('signupName').value.trim();const email=document.getElementById('signupEmail').value.trim();const pw=document.getElementById('signupPassword').value;const role=document.getElementById('signupRole').value;if(!role)return showToast('Please select your role.','error');try{const data=await apiSignup(name,email,pw,role);showToast('Account created! Welcome 🚀','success');closeModal('signupModal');e.target.reset();updateNavUser();}catch(err){showToast(err.message,'error');}}
+
+buildConvList();
+</script>
+</body>
+</html>

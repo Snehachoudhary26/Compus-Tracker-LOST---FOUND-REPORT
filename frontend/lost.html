@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF8A26">
+<title>Lost Items — CampusTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--primary:#FF8A26;--primary-dark:#e67300;--primary-light:#FFA94D;--accent:#FFC84D;--border:#FFE0B2;--border2:#f0f0f0;--text:#1a1a2e;--text2:#5a5a7a;--text3:#9090aa;--radius:16px;}
+body{font-family:'Inter',sans-serif;background:#FAFAFA;color:var(--text);line-height:1.6;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.nav-logo-text{font-size:1.15rem;font-weight:800;background:linear-gradient(135deg,var(--primary-dark),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:2px;list-style:none;}
+.nav-links a{padding:.45rem .85rem;font-size:.875rem;font-weight:500;color:var(--text2);text-decoration:none;border-radius:8px;transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--primary);background:#FFF3E0;}
+#navUser{display:flex;align-items:center;gap:.75rem;}
+.btn-nav-outline{padding:.45rem 1.1rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-nav-outline:hover{border-color:var(--primary);color:var(--primary);}
+.btn-nav-primary{padding:.45rem 1.2rem;border:none;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.nav-user-info{display:flex;align-items:center;gap:.5rem;font-size:.875rem;font-weight:600;}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.875rem;color:#fff;}
+.btn-logout{padding:.35rem .8rem;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:inherit;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:1.5px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;}
+.hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;}
+@media(max-width:900px){.nav-links{display:none;}.hamburger{display:flex;}}
+
+.page-hero{padding:88px 2rem 1.25rem;background:linear-gradient(135deg,#FFF8F0,#FFF3E0);border-bottom:1px solid var(--border);}
+.page-hero-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;}
+.page-hero-icon{width:56px;height:56px;background:linear-gradient(135deg,#fee2e2,#fecaca);border:2px solid #fca5a5;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;}
+.page-hero h1{font-size:1.75rem;font-weight:800;color:var(--text);margin-bottom:.2rem;}
+.page-hero p{font-size:.9rem;color:var(--text2);}
+
+.main{max-width:1100px;margin:1.5rem auto 3rem;padding:0 2rem;display:grid;grid-template-columns:1fr 380px;gap:1.5rem;}
+@media(max-width:900px){.main{grid-template-columns:1fr;}}
+
+.form-card{background:#fff;border:1.5px solid var(--border2);border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.06);}
+.form-card-header{padding:1rem 1.5rem;border-bottom:1px solid var(--border2);background:linear-gradient(135deg,#FFF8F0,#fff);}
+.form-card-header h2{font-size:1.1rem;font-weight:800;color:var(--text);}
+.form-card-header p{font-size:.825rem;color:var(--text2);margin-top:.15rem;}
+.form-card-body{padding:1.25rem 1.5rem;}
+.info-banner{background:linear-gradient(135deg,#FFF3E0,#FFF8E1);border:1.5px solid var(--border);border-radius:10px;padding:.6rem 1rem;margin-bottom:1rem;font-size:.825rem;color:var(--primary-dark);display:flex;gap:.5rem;align-items:flex-start;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+@media(max-width:600px){.form-row,.form-row-3{grid-template-columns:1fr;}}
+.form-group{margin-bottom:.75rem;}
+.form-group label{display:block;margin-bottom:.35rem;font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;}
+.required{color:var(--primary);}
+.form-control{width:100%;padding:.65rem .9rem;background:#FAFAFA;border:1.5px solid var(--border2);border-radius:9px;font-size:.9rem;font-family:inherit;color:var(--text);transition:all .2s;appearance:none;line-height:1.5;}
+.form-control:focus{outline:none;border-color:var(--primary);background:#FFF8F0;box-shadow:0 0 0 3px rgba(255,138,38,.12);}
+select.form-control{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239090aa' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;padding-right:2.5rem;}
+textarea.form-control{resize:vertical;min-height:70px;}
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:.85rem;text-align:center;cursor:pointer;background:#FFF8F0;transition:all .2s;position:relative;}
+.upload-zone:hover{border-color:var(--primary);background:#FFF3E0;}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-zone-icon{font-size:1.4rem;margin-bottom:.2rem;}
+.upload-zone p{font-size:.825rem;font-weight:600;color:var(--text);margin-bottom:.15rem;}
+.upload-zone span{font-size:.75rem;color:var(--text3);}
+.img-preview-wrap{margin-top:.75rem;border-radius:10px;overflow:hidden;border:2px solid var(--border);background:#fff;}
+.img-preview-wrap img{width:100%;max-height:180px;object-fit:cover;display:block;}
+.img-preview-info{padding:.5rem .75rem;background:#FFF8F0;font-size:.78rem;color:var(--text2);display:flex;align-items:center;justify-content:space-between;}
+.btn-remove-img{background:none;border:none;color:#ef4444;font-size:.78rem;font-weight:700;cursor:pointer;}
+.btn-submit{width:100%;padding:.85rem;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;border-radius:12px;font-size:.975rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem;box-shadow:0 4px 16px rgba(239,68,68,.3);}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(239,68,68,.4);}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;gap:1.25rem;}
+.tip-card{background:#fff;border:1.5px solid var(--border2);border-radius:16px;padding:1.25rem;}
+.tip-card-title{font-size:.875rem;font-weight:800;color:var(--text);margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.tip-item{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.65rem;font-size:.825rem;color:var(--text2);line-height:1.5;}
+.tip-icon{font-size:.9rem;flex-shrink:0;margin-top:.1rem;}
+
+/* SUCCESS CARD */
+.success-card{display:none;background:#fff;border:2px solid #10b981;border-radius:16px;padding:1.5rem;text-align:center;}
+.success-card.show{display:block;}
+.success-icon{font-size:3rem;margin-bottom:.75rem;}
+.success-card h3{font-size:1.1rem;font-weight:800;color:#065f46;margin-bottom:.5rem;}
+.success-card p{font-size:.875rem;color:var(--text2);margin-bottom:1rem;}
+.success-item-preview{background:#F0FDF4;border:1px solid #86efac;border-radius:10px;padding:.85rem;text-align:left;margin-bottom:1rem;}
+.success-item-preview img{width:100%;border-radius:8px;margin-bottom:.5rem;max-height:140px;object-fit:cover;}
+.success-item-name{font-size:.95rem;font-weight:700;color:var(--text);}
+.success-item-meta{font-size:.8rem;color:var(--text2);margin-top:.25rem;}
+.success-qr{margin:.75rem auto;width:120px;height:120px;background:#f0f0f0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text3);}
+.success-qr img{width:100%;border-radius:10px;}
+.btn-new-report{width:100%;padding:.7rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;border-radius:10px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:.5rem;}
+
+/* RECENT ITEMS */
+.recent-card{background:#fff;border:1.5px solid var(--border2);border-radius:16px;overflow:hidden;}
+.recent-card-title{padding:.85rem 1.25rem;font-size:.875rem;font-weight:800;border-bottom:1px solid var(--border2);background:linear-gradient(135deg,#FFF8F0,#fff);}
+.recent-item{padding:.75rem 1.25rem;border-bottom:1px solid var(--border2);display:flex;gap:.75rem;align-items:center;transition:background .15s;}
+.recent-item:last-child{border-bottom:none;}
+.recent-item:hover{background:#FFF8F0;}
+.recent-item-img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.recent-item-info{flex:1;min-width:0;}
+.recent-item-name{font-size:.825rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.recent-item-meta{font-size:.75rem;color:var(--text2);margin-top:.1rem;}
+.recent-badge{font-size:.68rem;font-weight:700;padding:.15rem .5rem;border-radius:999px;}
+.recent-badge.pending{background:#FFF3E0;color:var(--primary-dark);}
+.recent-badge.approved{background:#dcfce7;color:#166534;}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:2000;align-items:center;justify-content:center;padding:1.5rem;}
+.modal-overlay.active{display:flex;}
+.modal-box{background:#fff;border-radius:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.15);animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);}
+@keyframes modalIn{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;background:#f5f5f5;border:none;border-radius:50%;font-size:1rem;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:5;}
+.modal-close:hover{background:#ffe0e0;color:#e53e3e;transform:rotate(90deg);}
+.modal-head{padding:2rem 2rem 1.5rem;border-bottom:1px solid var(--border2);}
+.modal-head h2{font-size:1.5rem;font-weight:800;margin-bottom:.3rem;color:var(--text);}
+.modal-head p{font-size:.875rem;color:var(--text2);}
+.modal-body{padding:1.75rem 2rem 2rem;}
+.mform-group{margin-bottom:1rem;}
+.mform-group label{display:block;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em;}
+.mform-control{width:100%;padding:.72rem 1rem;background:#FAFAFA;border:1.5px solid var(--border2);border-radius:10px;font-size:.925rem;font-family:inherit;color:var(--text);transition:all .2s;appearance:none;}
+.mform-control:focus{outline:none;border-color:var(--primary);background:#FFF8F0;box-shadow:0 0 0 3px rgba(255,138,38,.12);}
+select.mform-control{cursor:pointer;}
+.btn-modal-submit{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;border-radius:10px;font-size:.975rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:.5rem;}
+.btn-modal-submit:hover{transform:translateY(-2px);}
+.modal-link{display:block;text-align:center;color:var(--primary);font-size:.875rem;font-weight:600;margin-top:1rem;text-decoration:none;cursor:pointer;}
+.ct-toast{position:fixed;top:80px;right:1.5rem;padding:.8rem 1.25rem;border-radius:12px;font-size:.875rem;font-weight:600;color:#fff;z-index:9999;transform:translateX(calc(100% + 2rem));transition:transform .4s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:.5rem;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.15);}
+.ct-toast.show{transform:translateX(0);}
+.ct-toast--success{background:linear-gradient(135deg,#00d4aa,#00b890);}
+.ct-toast--error{background:linear-gradient(135deg,#ff6b6b,#ee5555);}
+.footer{background:var(--text);padding:2rem;text-align:center;}
+.footer p{font-size:.875rem;color:rgba(255,255,255,.4);}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🎯</div>
+    <span class="nav-logo-text">CampusTracker</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="lost.html" class="active">Lost Items</a></li>
+    <li><a href="found.html">Found Items</a></li>
+    <li><a href="match.html">Match</a></li>
+    <li><a href="messages.html">Messages</a></li>
+    <li><a href="admin.html">Admin</a></li>
+    <li><a href="analytics.html">Analytics</a></li>
+    <li><a href="notifications.html">Notifications</a></li>
+  </ul>
+  <div id="navUser"></div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</header>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-icon">📦</div>
+    <div>
+      <h1>Report Lost Item</h1>
+      <p>Fill in the details — we'll notify you instantly when it's found on campus.</p>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- LEFT: FORM -->
+  <div>
+    <div class="form-card">
+      <div class="form-card-header">
+        <h2>Lost Item Details</h2>
+        <p>More details = better match accuracy</p>
+      </div>
+      <div class="form-card-body">
+        <div class="info-banner">📦 Add a clear photo and be specific about color, brand, and unique marks for best results.</div>
+        <form id="lostForm" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>User Type <span class="required">*</span></label>
+              <select class="form-control" id="userType" required>
+                <option value="">Select role</option>
+                <option>Student</option><option>Teacher</option><option>Staff</option><option>Worker</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Your Name <span class="required">*</span></label>
+              <input class="form-control" type="text" id="userName" placeholder="Full name" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Item Name <span class="required">*</span></label>
+              <input class="form-control" type="text" id="itemName" placeholder="e.g. Blue Backpack, iPhone 15" required>
+            </div>
+            <div class="form-group">
+              <label>Category <span class="required">*</span></label>
+              <select class="form-control" id="category" required>
+                <option value="">Select category</option>
+                <option>Electronics</option><option>Accessories</option><option>Documents & ID</option>
+                <option>Clothing & Bags</option><option>Books & Stationery</option>
+                <option>Keys & Cards</option><option>Jewelry & Watches</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description <span class="required">*</span></label>
+            <textarea class="form-control" id="desc" rows="3" placeholder="Color, brand, size, unique features, any identifying marks..." required></textarea>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>Location Lost <span class="required">*</span></label>
+              <input class="form-control" type="text" id="location" placeholder="e.g. Library, Room 101" required>
+            </div>
+            <div class="form-group">
+              <label>Date Lost</label>
+              <input class="form-control" type="date" id="dateLost">
+            </div>
+            <div class="form-group">
+              <label>Contact Email <span class="required">*</span></label>
+              <input class="form-control" type="email" id="email" placeholder="you@campus.edu" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Upload Photo <span style="color:var(--text3);font-weight:400;text-transform:none;">(recommended)</span></label>
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="imgFile" accept="image/*" onchange="handleFileSelect(this)">
+              <div class="upload-zone-icon">📷</div>
+              <p>Click or drag photo here</p>
+              <span>PNG, JPG up to 5MB — helps with matching</span>
+            </div>
+            <div id="imgPreviewWrap" style="display:none;" class="img-preview-wrap">
+              <img id="imgPreviewImg" src="" alt="Preview">
+              <div class="img-preview-info">
+                <span id="imgFileName">photo.jpg</span>
+                <button type="button" class="btn-remove-img" onclick="removePhoto()">✕ Remove</button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Submit Lost Item Report
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <!-- SUCCESS CARD (shows after submit) -->
+    <div class="success-card" id="successCard">
+      <div class="success-icon">🎉</div>
+      <h3>Report Submitted!</h3>
+      <p>Your lost item has been reported. We'll notify you when a match is found.</p>
+      <div class="success-item-preview" id="successPreview"></div>
+      <div class="success-qr" id="successQR">
+        <span>QR code generating…</span>
+      </div>
+      <p style="font-size:.75rem;color:var(--text3);margin-top:.3rem;">Scan QR to share your report</p>
+      <button class="btn-new-report" onclick="resetForm()">+ Report Another Item</button>
+    </div>
+
+    <!-- TIPS CARD -->
+    <div class="tip-card" id="tipsCard">
+      <div class="tip-card-title">💡 Tips for faster recovery</div>
+      <div class="tip-item"><span class="tip-icon">📸</span><span>Add a clear photo — items with photos get 3x more matches</span></div>
+      <div class="tip-item"><span class="tip-icon">📍</span><span>Be specific about the location — floor, room number helps a lot</span></div>
+      <div class="tip-item"><span class="tip-icon">🔍</span><span>Mention unique marks — scratches, stickers, name tags</span></div>
+      <div class="tip-item"><span class="tip-icon">⚡</span><span>Report immediately — items are found within 48 hours mostly</span></div>
+      <div class="tip-item"><span class="tip-icon">💬</span><span>Check messages regularly — someone might contact you</span></div>
+    </div>
+
+    <!-- RECENT LOST ITEMS -->
+    <div class="recent-card">
+      <div class="recent-card-title">📋 Recent Lost Reports</div>
+      <div id="recentList">
+        <div style="padding:1.5rem;text-align:center;color:var(--text3);font-size:.85rem;">Loading recent items…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('loginModal')">×</button>
+    <div class="modal-head"><h2>Welcome back 👋</h2><p>Sign in to your account</p></div>
+    <div class="modal-body">
+      <form onsubmit="handleLogin(event)">
+        <div class="mform-group"><label>Email</label><input class="mform-control" type="email" id="loginEmail" placeholder="you@campus.edu" required></div>
+        <div class="mform-group"><label>Password</label><input class="mform-control" type="password" id="loginPassword" placeholder="••••••••" required minlength="6"></div>
+        <div class="mform-group"><label>Role</label><select class="mform-control" id="loginRole" required><option value="">Select role</option><option>Student</option><option>Teacher</option><option>Staff</option><option>Worker</option></select></div>
+        <button type="submit" class="btn-modal-submit">Log In →</button>
+        <a class="modal-link" onclick="closeModal('loginModal');openModal('signupModal')">Don't have an account? Sign up</a>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="signupModal" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('signupModal')">×</button>
+    <div class="modal-head"><h2>Create account ✨</h2><p>Join CampusTracker free</p></div>
+    <div class="modal-body">
+      <form onsubmit="handleSignup(event)">
+        <div class="mform-group"><label>Full Name</label><input class="mform-control" type="text" id="signupName" placeholder="John Doe" required minlength="3"></div>
+        <div class="mform-group"><label>Email</label><input class="mform-control" type="email" id="signupEmail" placeholder="you@campus.edu" required></div>
+        <div class="mform-group"><label>Password</label><input class="mform-control" type="password" id="signupPassword" placeholder="Min. 6 characters" required minlength="6"></div>
+        <div class="mform-group"><label>Role</label><select class="mform-control" id="signupRole" required><option value="">Select role</option><option>Student</option><option>Teacher</option><option>Staff</option><option>Worker</option></select></div>
+        <button type="submit" class="btn-modal-submit">Create Account →</button>
+        <a class="modal-link" onclick="closeModal('signupModal');openModal('loginModal')">Already have an account? Log in</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer class="footer"><p>© 2026 CampusTracker. All rights reserved.</p></footer>
+
+<script src="api.js"></script>
+<script>
+document.getElementById('hamburger').addEventListener('click',()=>{const nl=document.querySelector('.nav-links');nl.style.display=nl.style.display==='flex'?'none':'flex';});
+
+let selectedFile = null;
+
+function handleFileSelect(input){
+  const f = input.files[0];
+  if(!f) return;
+  if(f.size > 5*1024*1024){ showToast('Image must be under 5MB.','error'); input.value=''; return; }
+  selectedFile = f;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('imgPreviewImg').src = e.target.result;
+    document.getElementById('imgFileName').textContent = f.name;
+    document.getElementById('imgPreviewWrap').style.display = 'block';
+    document.getElementById('uploadZone').style.display = 'none';
+  };
+  reader.readAsDataURL(f);
+}
+
+function removePhoto(){
+  selectedFile = null;
+  document.getElementById('imgFile').value = '';
+  document.getElementById('imgPreviewWrap').style.display = 'none';
+  document.getElementById('uploadZone').style.display = 'block';
+}
+
+async function handleSubmit(e){
+  e.preventDefault();
+  const v = id => document.getElementById(id).value.trim();
+  if(!v('userType')||!v('userName')||!v('itemName')||!v('category')||!v('desc')||!v('location')||!v('email'))
+    return showToast('Please fill in all required fields.','error');
+
+  const fd = new FormData();
+  fd.append('type','lost');
+  fd.append('userType', v('userType'));
+  fd.append('userName', v('userName'));
+  fd.append('name', v('itemName'));
+  fd.append('category', v('category'));
+  fd.append('description', v('desc'));
+  fd.append('location', v('location'));
+  fd.append('date', document.getElementById('dateLost').value||'');
+  fd.append('email', v('email'));
+  if(selectedFile) fd.append('image', selectedFile);
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div> Submitting…';
+
+  try {
+    const data = await apiReportItem(fd);
+    showToast('Lost item reported successfully! 🎉','success');
+    showSuccessCard(v('itemName'), v('category'), v('location'), v('userType'), v('userName'), data);
+    loadRecentItems();
+  } catch(err) {
+    showToast(err.message || 'Failed to submit. Is backend running?','error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Lost Item Report';
+  }
+}
+
+function showSuccessCard(name, category, location, userType, userName, data){
+  const preview = document.getElementById('successPreview');
+  const imgSrc = document.getElementById('imgPreviewImg').src;
+  const hasImg = imgSrc && imgSrc !== window.location.href;
+
+  preview.innerHTML = `
+    ${hasImg ? `<img src="${imgSrc}" alt="${name}">` : `<div style="width:100%;height:80px;background:#f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:.5rem;">📦</div>`}
+    <div class="success-item-name">${name}</div>
+    <div class="success-item-meta">📍 ${location} · 🏷️ ${category}</div>
+    <div class="success-item-meta">👤 ${userType} — ${userName}</div>
+    ${data.matches && data.matches.length > 0 ? `<div style="margin-top:.5rem;padding:.4rem .7rem;background:#dcfce7;border-radius:8px;font-size:.78rem;color:#166534;font-weight:700;">🎯 ${data.matches.length} potential match(es) found!</div>` : ''}
+  `;
+
+  // Show QR code if generated
+  if(data.qrCode){
+    document.getElementById('successQR').innerHTML = `<img src="http://localhost:8080${data.qrCode}" alt="QR Code">`;
+  }
+
+  document.getElementById('successCard').classList.add('show');
+  document.getElementById('tipsCard').style.display = 'none';
+  document.getElementById('successCard').scrollIntoView({behavior:'smooth'});
+}
+
+function resetForm(){
+  document.getElementById('lostForm').reset();
+  removePhoto();
+  document.getElementById('successCard').classList.remove('show');
+  document.getElementById('tipsCard').style.display = 'block';
+}
+
+async function loadRecentItems(){
+  try {
+    const items = await apiGetItems('lost');
+    const list = document.getElementById('recentList');
+    if(!items.length){ list.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--text3);font-size:.85rem;">No items yet</div>'; return; }
+    list.innerHTML = items.slice(0,5).map(i=>`
+      <div class="recent-item">
+        <div class="recent-item-img">
+          ${i.imageUrl ? `<img src="http://localhost:8080${i.imageUrl}" alt="${i.name}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;">` : '📦'}
+        </div>
+        <div class="recent-item-info">
+          <div class="recent-item-name">${i.name}</div>
+          <div class="recent-item-meta">📍 ${i.location||''} · ${i.category||''}</div>
+        </div>
+        <span class="recent-badge ${i.status||'pending'}">${(i.status||'pending').toUpperCase()}</span>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('recentList').innerHTML='<div style="padding:1rem;text-align:center;color:var(--text3);font-size:.82rem;">Start backend to see items</div>';
+  }
+}
+
+async function handleLogin(e){e.preventDefault();const email=document.getElementById('loginEmail').value.trim();const pw=document.getElementById('loginPassword').value;const role=document.getElementById('loginRole').value;if(!role)return showToast('Please select your role.','error');try{const data=await apiLogin(email,pw,role);showToast('Welcome back, '+data.user.name+'!','success');closeModal('loginModal');e.target.reset();updateNavUser();}catch(err){showToast(err.message,'error');}}
+async function handleSignup(e){e.preventDefault();const name=document.getElementById('signupName').value.trim();const email=document.getElementById('signupEmail').value.trim();const pw=document.getElementById('signupPassword').value;const role=document.getElementById('signupRole').value;if(!role)return showToast('Please select your role.','error');try{const data=await apiSignup(name,email,pw,role);showToast('Account created! Welcome 🚀','success');closeModal('signupModal');e.target.reset();updateNavUser();}catch(err){showToast(err.message,'error');}}
+
+loadRecentItems();
+</script>
+</body>
+</html>

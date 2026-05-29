@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF8A26">
+<title>Analytics — CampusTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--primary:#FF8A26;--primary-dark:#e67300;--primary-light:#FFA94D;--accent:#FFC84D;--border:#FFE0B2;--border2:#f0f0f0;--text:#1a1a2e;--text2:#5a5a7a;--text3:#9090aa;--bg:#FAFAFA;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.nav-logo-text{font-size:1.15rem;font-weight:800;background:linear-gradient(135deg,var(--primary-dark),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:2px;list-style:none;}
+.nav-links a{padding:.45rem .85rem;font-size:.875rem;font-weight:500;color:var(--text2);text-decoration:none;border-radius:8px;transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--primary);background:#FFF3E0;}
+#navUser{display:flex;align-items:center;gap:.75rem;}
+.btn-nav-outline{padding:.45rem 1.1rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-nav-primary{padding:.45rem 1.2rem;border:none;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.nav-user-info{display:flex;align-items:center;gap:.5rem;font-size:.875rem;font-weight:600;}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.875rem;color:#fff;}
+.btn-logout{padding:.35rem .8rem;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:inherit;}
+
+.page-hero{padding:88px 2rem 1.5rem;background:linear-gradient(135deg,#FFF8F0,#FFF3E0);border-bottom:1px solid var(--border);}
+.page-hero-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.page-hero-left{display:flex;align-items:center;gap:1.25rem;}
+.page-hero-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 4px 16px rgba(255,138,38,.3);}
+.page-hero h1{font-size:1.75rem;font-weight:800;margin-bottom:.2rem;}
+.page-hero p{font-size:.9rem;color:var(--text2);}
+.live-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .75rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:999px;font-size:.75rem;font-weight:700;color:#166534;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.main{max-width:1200px;margin:2rem auto 4rem;padding:0 2rem;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:2rem;}
+@media(max-width:800px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+.kpi-card{background:#fff;border:1.5px solid var(--border2);border-radius:16px;padding:1.5rem;position:relative;overflow:hidden;transition:all .3s;}
+.kpi-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
+.kpi-icon{font-size:1.75rem;margin-bottom:.75rem;}
+.kpi-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:.3rem;}
+.kpi-value{font-size:2.5rem;font-weight:900;line-height:1;}
+.kpi-card:nth-child(1) .kpi-value{color:var(--primary);}
+.kpi-card:nth-child(2) .kpi-value{color:#ef4444;}
+.kpi-card:nth-child(3) .kpi-value{color:#10b981;}
+.kpi-card:nth-child(4) .kpi-value{color:#8b5cf6;}
+.kpi-trend{font-size:.78rem;color:var(--text3);margin-top:.4rem;}
+.kpi-trend span{color:#22c55e;font-weight:700;}
+
+.charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+@media(max-width:900px){.charts-grid{grid-template-columns:1fr;}}
+.chart-card{background:#fff;border:1.5px solid var(--border2);border-radius:20px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.chart-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.chart-card-title{font-size:1rem;font-weight:800;}
+.chart-card-sub{font-size:.78rem;color:var(--text3);margin-top:.15rem;}
+.chart-badge{padding:.25rem .65rem;background:#FFF3E0;border:1px solid var(--border);border-radius:999px;font-size:.72rem;font-weight:700;color:var(--primary-dark);}
+.chart-wrap{position:relative;height:260px;}
+
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:900px){.bottom-grid{grid-template-columns:1fr;}}
+
+table{width:100%;border-collapse:collapse;}
+th{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:.6rem 1rem;text-align:left;border-bottom:1.5px solid var(--border2);}
+td{padding:.85rem 1rem;font-size:.875rem;border-bottom:1px solid var(--border2);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#FFF8F0;}
+.type-badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;font-size:.72rem;font-weight:700;}
+.type-badge.lost{background:#fee2e2;color:#991b1b;}
+.type-badge.found{background:#dcfce7;color:#166534;}
+.status-badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;font-size:.72rem;font-weight:700;}
+.status-badge.pending{background:#FFF3E0;color:var(--primary-dark);}
+.status-badge.approved{background:#dcfce7;color:#166534;}
+
+.category-list{display:flex;flex-direction:column;gap:.85rem;}
+.category-item{display:flex;align-items:center;gap:.85rem;}
+.category-icon{font-size:1.1rem;width:32px;text-align:center;}
+.category-info{flex:1;}
+.category-name{font-size:.85rem;font-weight:600;margin-bottom:.25rem;}
+.category-bar-wrap{height:7px;background:var(--border2);border-radius:999px;overflow:hidden;}
+.category-bar{height:100%;border-radius:999px;background:linear-gradient(135deg,var(--primary),var(--accent));}
+.category-count{font-size:.82rem;font-weight:800;color:var(--primary);min-width:24px;text-align:right;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:2000;align-items:center;justify-content:center;padding:1.5rem;}
+.modal-overlay.active{display:flex;}
+.modal-box{background:#fff;border-radius:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.15);animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);}
+@keyframes modalIn{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;background:#f5f5f5;border:none;border-radius:50%;font-size:1rem;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;}
+.modal-close:hover{background:#ffe0e0;color:#e53e3e;}
+.modal-head{padding:2rem 2rem 1.5rem;border-bottom:1px solid var(--border2);}
+.modal-head h2{font-size:1.5rem;font-weight:800;margin-bottom:.3rem;}
+.modal-head p{font-size:.875rem;color:var(--text2);}
+.modal-body{padding:1.75rem 2rem 2rem;}
+.mform-group{margin-bottom:1rem;}
+.mform-group label{display:block;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em;}
+.mform-control{width:100%;padding:.72rem 1rem;background:#FAFAFA;border:1.5px solid var(--border2);border-radius:10px;font-size:.925rem;font-family:inherit;color:var(--text);transition:all .2s;appearance:none;}
+.mform-control:focus{outline:none;border-color:var(--primary);background:#FFF8F0;box-shadow:0 0 0 3px rgba(255,138,38,.12);}
+select.mform-control{cursor:pointer;}
+.btn-modal-submit{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;border-radius:10px;font-size:.975rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:.5rem;}
+.btn-modal-submit:hover{transform:translateY(-2px);}
+.modal-link{display:block;text-align:center;color:var(--primary);font-size:.875rem;font-weight:600;margin-top:1rem;cursor:pointer;}
+.ct-toast{position:fixed;top:80px;right:1.5rem;padding:.8rem 1.25rem;border-radius:12px;font-size:.875rem;font-weight:600;color:#fff;z-index:9999;transform:translateX(calc(100% + 2rem));transition:transform .4s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:.5rem;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.15);}
+.ct-toast.show{transform:translateX(0);}
+.ct-toast--success{background:linear-gradient(135deg,#00d4aa,#00b890);}
+.ct-toast--error{background:linear-gradient(135deg,#ff6b6b,#ee5555);}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🎯</div>
+    <span class="nav-logo-text">CampusTracker</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="lost.html">Lost Items</a></li>
+    <li><a href="found.html">Found Items</a></li>
+    <li><a href="match.html">Match</a></li>
+    <li><a href="messages.html">Messages</a></li>
+    <li><a href="admin.html">Admin</a></li>
+    <li><a href="analytics.html" class="active">Analytics</a></li>
+    <li><a href="notifications.html">Notifications</a></li>
+  </ul>
+  <div id="navUser"></div>
+</header>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-left">
+      <div class="page-hero-icon">📊</div>
+      <div><h1>Analytics Dashboard</h1><p>Real-time insights and campus lost & found trends</p></div>
+    </div>
+    <div class="live-badge"><div class="live-dot"></div> Live Data</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-icon">📋</div><div class="kpi-label">Total Reports</div><div class="kpi-value" id="kpiTotal">47</div><div class="kpi-trend">All time reports</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-label">Lost Items</div><div class="kpi-value" id="kpiLost">28</div><div class="kpi-trend">Awaiting recovery</div></div>
+    <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-label">Found Items</div><div class="kpi-value" id="kpiFound">19</div><div class="kpi-trend">Reported by community</div></div>
+    <div class="kpi-card"><div class="kpi-icon">🎯</div><div class="kpi-label">Recovery Rate</div><div class="kpi-value" id="kpiRate">32%</div><div class="kpi-trend"><span>↑ AI matching</span> powered</div></div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-card-title">Daily Reports Trend</div><div class="chart-card-sub">Lost vs Found items over last 7 days</div></div>
+        <div class="chart-badge">Last 7 days</div>
+      </div>
+      <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-card-title">Item Types</div><div class="chart-card-sub">Distribution breakdown</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="chart-card">
+      <div class="chart-card-header"><div><div class="chart-card-title">Recent Reports</div><div class="chart-card-sub">Latest submissions</div></div></div>
+      <table><thead><tr><th>Item</th><th>Type</th><th>Location</th><th>Status</th></tr></thead>
+      <tbody id="recentTable">
+        <tr><td style="font-weight:600">Blue Backpack</td><td><span class="type-badge lost">LOST</span></td><td>Library</td><td><span class="status-badge pending">PENDING</span></td></tr>
+        <tr><td style="font-weight:600">Black Wallet</td><td><span class="type-badge found">FOUND</span></td><td>Cafeteria</td><td><span class="status-badge approved">APPROVED</span></td></tr>
+        <tr><td style="font-weight:600">iPhone 13 Pro</td><td><span class="type-badge lost">LOST</span></td><td>Canteen</td><td><span class="status-badge pending">PENDING</span></td></tr>
+        <tr><td style="font-weight:600">AirPods Pro</td><td><span class="type-badge found">FOUND</span></td><td>Gym</td><td><span class="status-badge pending">PENDING</span></td></tr>
+        <tr><td style="font-weight:600">Student ID Card</td><td><span class="type-badge lost">LOST</span></td><td>Main Gate</td><td><span class="status-badge approved">APPROVED</span></td></tr>
+      </tbody></table>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header"><div><div class="chart-card-title">Top Categories</div><div class="chart-card-sub">Most reported item categories</div></div></div>
+      <div class="category-list" id="categoryList">
+        <div class="category-item"><div class="category-icon">📱</div><div class="category-info"><div class="category-name">Electronics</div><div class="category-bar-wrap"><div class="category-bar" style="width:100%"></div></div></div><div class="category-count">14</div></div>
+        <div class="category-item"><div class="category-icon">👜</div><div class="category-info"><div class="category-name">Clothing & Bags</div><div class="category-bar-wrap"><div class="category-bar" style="width:78%"></div></div></div><div class="category-count">11</div></div>
+        <div class="category-item"><div class="category-icon">🔑</div><div class="category-info"><div class="category-name">Keys & Cards</div><div class="category-bar-wrap"><div class="category-bar" style="width:57%"></div></div></div><div class="category-count">8</div></div>
+        <div class="category-item"><div class="category-icon">⌚</div><div class="category-info"><div class="category-name">Accessories</div><div class="category-bar-wrap"><div class="category-bar" style="width:50%"></div></div></div><div class="category-count">7</div></div>
+        <div class="category-item"><div class="category-icon">📄</div><div class="category-info"><div class="category-name">Documents & ID</div><div class="category-bar-wrap"><div class="category-bar" style="width:28%"></div></div></div><div class="category-count">4</div></div>
+        <div class="category-item"><div class="category-icon">📚</div><div class="category-info"><div class="category-name">Books & Stationery</div><div class="category-bar-wrap"><div class="category-bar" style="width:21%"></div></div></div><div class="category-count">3</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="loginModal" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('loginModal')">×</button>
+    <div class="modal-head"><h2>Welcome back 👋</h2><p>Sign in to your account</p></div>
+    <div class="modal-body">
+      <form onsubmit="handleLogin(event)">
+        <div class="mform-group"><label>Email</label><input class="mform-control" type="email" id="loginEmail" placeholder="you@campus.edu" required></div>
+        <div class="mform-group"><label>Password</label><input class="mform-control" type="password" id="loginPassword" placeholder="••••••••" required></div>
+        <div class="mform-group"><label>Role</label><select class="mform-control" id="loginRole" required><option value="">Select role</option><option>Student</option><option>Teacher</option><option>Staff</option><option>Worker</option></select></div>
+        <button type="submit" class="btn-modal-submit">Log In →</button>
+        <a class="modal-link" onclick="closeModal('loginModal');openModal('signupModal')">Don't have an account? Sign up</a>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="signupModal" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('signupModal')">×</button>
+    <div class="modal-head"><h2>Create account ✨</h2><p>Join CampusTracker free</p></div>
+    <div class="modal-body">
+      <form onsubmit="handleSignup(event)">
+        <div class="mform-group"><label>Full Name</label><input class="mform-control" type="text" id="signupName" placeholder="John Doe" required></div>
+        <div class="mform-group"><label>Email</label><input class="mform-control" type="email" id="signupEmail" placeholder="you@campus.edu" required></div>
+        <div class="mform-group"><label>Password</label><input class="mform-control" type="password" id="signupPassword" placeholder="Min. 6 characters" required></div>
+        <div class="mform-group"><label>Role</label><select class="mform-control" id="signupRole" required><option value="">Select role</option><option>Student</option><option>Teacher</option><option>Staff</option><option>Worker</option></select></div>
+        <button type="submit" class="btn-modal-submit">Create Account →</button>
+        <a class="modal-link" onclick="closeModal('signupModal');openModal('loginModal')">Already have an account? Log in</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Load Chart.js FIRST then api.js then our code -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="api.js"></script>
+<script>
+// Build charts immediately after Chart.js loads
+window.addEventListener('load', function() {
+  buildCharts();
+  loadRealData();
+});
+
+function buildCharts() {
+  // Trend Chart
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+      labels: ['Mon 21','Tue 22','Wed 23','Thu 24','Fri 25','Sat 26','Sun 27'],
+      datasets: [
+        { label:'Lost', data:[3,5,2,6,4,3,5], borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,.12)', tension:.4, fill:true, pointBackgroundColor:'#ef4444', pointRadius:5, pointHoverRadius:7 },
+        { label:'Found', data:[2,1,4,3,2,5,2], borderColor:'#10b981', backgroundColor:'rgba(16,185,129,.12)', tension:.4, fill:true, pointBackgroundColor:'#10b981', pointRadius:5, pointHoverRadius:7 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', labels:{ usePointStyle:true, font:{ family:'Inter', size:12 }, padding:20 } } },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ font:{ family:'Inter', size:11 }, color:'#9090aa' } },
+        y:{ grid:{ color:'#f5f5f5' }, ticks:{ font:{ family:'Inter', size:11 }, color:'#9090aa', stepSize:1 }, min:0 }
+      }
+    }
+  });
+
+  // Donut Chart
+  new Chart(document.getElementById('donutChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Lost Items','Found Items','Recovered'],
+      datasets: [{
+        data: [28, 19, 15],
+        backgroundColor: ['#ef4444','#10b981','#FF8A26'],
+        borderWidth: 4, borderColor: '#fff', hoverOffset: 10
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, font:{ family:'Inter', size:12 }, padding:20 } } },
+      cutout:'72%'
+    }
+  });
+}
+
+async function loadRealData() {
+  try {
+    const res = await fetch('http://localhost:8080/api/analytics/dashboard');
+    if(!res.ok) return;
+    const d = await res.json();
+    if(!d || d.totalItems === 0) return;
+
+    document.getElementById('kpiTotal').textContent = d.totalItems||47;
+    document.getElementById('kpiLost').textContent = d.lostItems||28;
+    document.getElementById('kpiFound').textContent = d.foundItems||19;
+    document.getElementById('kpiRate').textContent = (d.recoveryRate||32)+'%';
+
+    if(d.recentItems && d.recentItems.length > 0){
+      document.getElementById('recentTable').innerHTML = d.recentItems.map(i=>`
+        <tr>
+          <td style="font-weight:600">${i.name||''}</td>
+          <td><span class="type-badge ${i.type}">${(i.type||'').toUpperCase()}</span></td>
+          <td style="color:var(--text2)">${i.location||'—'}</td>
+          <td><span class="status-badge ${i.status||'pending'}">${(i.status||'pending').toUpperCase()}</span></td>
+        </tr>`).join('');
+    }
+
+    if(d.categoryData && d.categoryData.length > 0){
+      const icons = {'Electronics':'📱','Clothing & Bags':'👜','Keys & Cards':'🔑','Accessories':'⌚','Documents & ID':'📄','Books & Stationery':'📚','Other':'📦'};
+      const max = Math.max(...d.categoryData.map(c=>c.count),1);
+      document.getElementById('categoryList').innerHTML = d.categoryData.map(c=>`
+        <div class="category-item">
+          <div class="category-icon">${icons[c._id]||'📦'}</div>
+          <div class="category-info">
+            <div class="category-name">${c._id}</div>
+            <div class="category-bar-wrap"><div class="category-bar" style="width:${Math.round((c.count/max)*100)}%"></div></div>
+          </div>
+          <div class="category-count">${c.count}</div>
+        </div>`).join('');
+    }
+  } catch(e) { console.log('Using demo data'); }
+}
+
+async function handleLogin(e){e.preventDefault();const email=document.getElementById('loginEmail').value.trim();const pw=document.getElementById('loginPassword').value;const role=document.getElementById('loginRole').value;if(!role)return showToast('Please select your role.','error');try{const data=await apiLogin(email,pw,role);showToast('Welcome back, '+data.user.name+'!','success');closeModal('loginModal');e.target.reset();updateNavUser();}catch(err){showToast(err.message,'error');}}
+async function handleSignup(e){e.preventDefault();const name=document.getElementById('signupName').value.trim();const email=document.getElementById('signupEmail').value.trim();const pw=document.getElementById('signupPassword').value;const role=document.getElementById('signupRole').value;if(!role)return showToast('Please select your role.','error');try{const data=await apiSignup(name,email,pw,role);showToast('Account created!','success');closeModal('signupModal');e.target.reset();updateNavUser();}catch(err){showToast(err.message,'error');}}
+</script>
+</body>
+</html>
