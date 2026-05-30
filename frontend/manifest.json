@@ -1,29 +1,59 @@
+
 {
+
   "name": "CampusTracker",
+
   "short_name": "CampusTracker",
+
   "description": "Smart Lost & Found Platform for Campus",
+
   "start_url": "/index.html",
+
   "display": "standalone",
+
   "background_color": "#ffffff",
+
   "theme_color": "#FF8A26",
+
   "orientation": "portrait-primary",
+
   "icons": [
+
     {
-      "src": "https://img.sanishtech.com/u/65e0b8ce3806cf9bfaeddf76a9bf1d81.png",
+
+      "src": "",
+
       "sizes": "192x192",
+
       "type": "image/png",
+
       "purpose": "any maskable"
+
     },
+
     {
-      "src": "https://img.sanishtech.com/u/65e0b8ce3806cf9bfaeddf76a9bf1d81.png",
+
+      "src": "https://i.im.ge/QMhSrPY/Screenshot_2026-05-29_at_3.44.02_PM.png",
+
       "sizes": "512x512",
+
       "type": "image/png",
+
       "purpose": "any maskable"
+
     }
+
   ],
+
   "categories": ["education", "utilities"],
+
   "shortcuts": [
-    { "name": "Report Lost Item", "url": "/lost.html", "description": "Report a lost item", "icons": [{"src": "https://img.sanishtech.com/u/65e0b8ce3806cf9bfaeddf76a9bf1d81.png", "sizes": "96x96"}] },
-    { "name": "Report Found Item", "url": "/found.html", "description": "Report a found item", "icons": [{"src": "https://img.sanishtech.com/u/65e0b8ce3806cf9bfaeddf76a9bf1d81.png", "sizes": "96x96"}] }
+
+    { "name": "Report Lost Item", "url": "/lost.html", "description": "Report a lost item", "icons": [{"src": "https://i.im.ge/QMhSrPY/Screenshot_2026-05-29_at_3.44.02_PM.png", "sizes": "96x96"}] },
+
+    { "name": "Report Found Item", "url": "/found.html", "description": "Report a found item", "icons": [{"src": "https://i.im.ge/QMhSrPY/Screenshot_2026-05-29_at_3.44.02_PM.png", "sizes": "96x96"}] }
+
   ]
+
 }
+
