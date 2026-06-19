@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="favicon.svg">
 <meta charset="UTF-8">
-<link rel="icon" type="image/png" href="https://img.sanishtech.com/u/65e0b8ce3806cf9bfaeddf76a9bf1d81.png"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  
+
 <link rel="apple-touch-icon" href="https://img.sanishtech.com/u/65e0b8ce3806cf9bfaeddf76a9bf1d81.png"/>
 <meta name="apple-mobile-web-app-title" content="CampusTracker"/>
 <meta name="application-name" content="CampusTracker"/>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#FF8A26">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>CampusTracker — Find What's Lost</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -196,7 +201,9 @@ select.form-control{cursor:pointer;}
 .animate-on-scroll{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease;}
 .animate-on-scroll.visible{opacity:1;transform:translateY(0);}
 .delay-1{transition-delay:.1s;}.delay-2{transition-delay:.2s;}.delay-3{transition-delay:.3s;}
+@media(max-width:768px){.nav-links,.nav-actions{display:none!important;}.hamburger,.navbar__hamburger{display:flex!important;}.form-row{grid-template-columns:1fr!important;}.stats-inner{grid-template-columns:repeat(2,1fr)!important;}.hero h1{font-size:1.6rem!important;}.chat-wrap{grid-template-columns:1fr!important;}.action-grid{grid-template-columns:1fr!important;}}@media(max-width:480px){.hero h1{font-size:1.3rem!important;}.stat-num{font-size:1.2rem!important;}table{display:block;overflow-x:auto;}}
 </style>
+  <link rel="stylesheet" href="mobile.css">
 </head>
 <body>
 
@@ -478,8 +485,26 @@ select.form-control{cursor:pointer;}
 <script src="api.js"></script>
 <script>
 document.getElementById('hamburger').addEventListener('click', () => {
-  const nl = document.querySelector('.nav-links');
-  nl.style.display = nl.style.display === 'flex' ? 'none' : 'flex';
+  let drawer = document.getElementById('mobileDrawer');
+  if (!drawer) {
+    drawer = document.createElement('div');
+    drawer.id = 'mobileDrawer';
+    drawer.className = 'mobile-drawer';
+    drawer.innerHTML = `
+      <a href="index.html">🏠 Home</a>
+      <a href="lost.html">📦 Lost Items</a>
+      <a href="found.html">✅ Found Items</a>
+      <a href="match.html">🔍 Match Items</a>
+      <a href="messages.html">💬 Messages</a>
+      <a href="admin.html">🛠 Admin Panel</a>
+      <a href="notifications.html">🔔 Notifications</a>
+      <div class="mobile-drawer-actions">
+        <button class="btn-login" onclick="openModal('loginModal');this.closest('.mobile-drawer').classList.remove('open')">Log In</button>
+        <button class="btn-signup" onclick="openModal('signupModal');this.closest('.mobile-drawer').classList.remove('open')">Sign Up</button>
+      </div>`;
+    document.body.appendChild(drawer);
+  }
+  drawer.classList.toggle('open');
 });
 
 function toggleNotif() {

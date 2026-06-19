@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="favicon.svg">
 <meta charset="UTF-8">
-<link rel="icon" type="image/png" href="https://img.sanishtech.com/u/65e0b8ce3806cf9bfaeddf76a9bf1d81.png"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  
+
 <link rel="apple-touch-icon" href="https://img.sanishtech.com/u/65e0b8ce3806cf9bfaeddf76a9bf1d81.png"/>
 <meta name="apple-mobile-web-app-title" content="CampusTracker"/>
 <meta name="application-name" content="CampusTracker"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#FF8A26">
 <title>Lost Items — CampusTracker</title>
@@ -133,7 +138,9 @@ select.mform-control{cursor:pointer;}
 .footer{background:var(--text);padding:2rem;text-align:center;}
 .footer p{font-size:.875rem;color:rgba(255,255,255,.4);}
 @keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:768px){.nav-links,.nav-actions{display:none!important;}.hamburger,.navbar__hamburger{display:flex!important;}.form-row{grid-template-columns:1fr!important;}.stats-inner{grid-template-columns:repeat(2,1fr)!important;}.hero h1{font-size:1.6rem!important;}.chat-wrap{grid-template-columns:1fr!important;}.action-grid{grid-template-columns:1fr!important;}}@media(max-width:480px){.hero h1{font-size:1.3rem!important;}.stat-num{font-size:1.2rem!important;}table{display:block;overflow-x:auto;}}
 </style>
+  <link rel="stylesheet" href="mobile.css">
 </head>
 <body>
 <header class="navbar">
@@ -435,6 +442,26 @@ async function handleLogin(e){e.preventDefault();const email=document.getElement
 async function handleSignup(e){e.preventDefault();const name=document.getElementById('signupName').value.trim();const email=document.getElementById('signupEmail').value.trim();const pw=document.getElementById('signupPassword').value;const role=document.getElementById('signupRole').value;if(!role)return showToast('Please select your role.','error');try{const data=await apiSignup(name,email,pw,role);showToast('Account created! Welcome 🚀','success');closeModal('signupModal');e.target.reset();updateNavUser();}catch(err){showToast(err.message,'error');}}
 
 loadRecentItems();
+</script>
+
+<script>
+// Mobile drawer - added for responsiveness only
+(function(){
+  var btn = document.getElementById('hamburger');
+  if(!btn) return;
+  var drawer = document.createElement('div');
+  drawer.id = 'mobileDrawer';
+  drawer.style.cssText = 'display:none;position:fixed;top:64px;left:0;right:0;background:#fff;border-bottom:3px solid #FF8A26;z-index:99999;flex-direction:column;padding:1rem 1.5rem 1.5rem;gap:.35rem;box-shadow:0 8px 32px rgba(0,0,0,.15);';
+  drawer.innerHTML = '<a href="index.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">🏠 Home</a><a href="lost.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">📦 Lost Items</a><a href="found.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">✅ Found Items</a><a href="match.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">🔍 Match Items</a><a href="messages.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">💬 Messages</a><a href="admin.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">🛠 Admin Panel</a><a href="notifications.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">🔔 Notifications</a><div style="display:flex;gap:.5rem;margin-top:.75rem;padding-top:.75rem;border-top:1px solid #e2e8f0;"><button onclick="openModal(\'loginModal\');document.getElementById(\'mobileDrawer\').style.display=\'none\';" style="flex:1;padding:.65rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;background:transparent;border:1.5px solid #e2e8f0;color:#334155;">Log In</button><button onclick="openModal(\'signupModal\');document.getElementById(\'mobileDrawer\').style.display=\'none\';" style="flex:1;padding:.65rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;background:#FF8A26;border:none;color:#fff;">Sign Up</button></div>';
+  document.body.appendChild(drawer);
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    drawer.style.display = drawer.style.display === 'flex' ? 'none' : 'flex';
+  });
+  document.addEventListener('click', function(e){
+    if(!drawer.contains(e.target) && e.target !== btn) drawer.style.display = 'none';
+  });
+})();
 </script>
 </body>
 </html>
