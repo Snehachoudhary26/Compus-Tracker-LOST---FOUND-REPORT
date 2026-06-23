@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = 'https://campus-tracker-api.onrender.com/api';
 
 const getToken = () => localStorage.getItem('ct_token');
 const getUser = () => { const u = localStorage.getItem('ct_user'); return u ? JSON.parse(u) : null; };
