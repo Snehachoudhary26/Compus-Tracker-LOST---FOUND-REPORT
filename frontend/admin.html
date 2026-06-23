@@ -122,6 +122,55 @@ select.mform-control{cursor:pointer;}
 @media(max-width:768px){.nav-links,.nav-actions{display:none!important;}.hamburger,.navbar__hamburger{display:flex!important;}.form-row{grid-template-columns:1fr!important;}.stats-inner{grid-template-columns:repeat(2,1fr)!important;}.hero h1{font-size:1.6rem!important;}.chat-wrap{grid-template-columns:1fr!important;}.action-grid{grid-template-columns:1fr!important;}}@media(max-width:480px){.hero h1{font-size:1.3rem!important;}.stat-num{font-size:1.2rem!important;}table{display:block;overflow-x:auto;}}
 </style>
   <link rel="stylesheet" href="mobile.css">
+
+<style>
+@media(max-width:768px){
+  .post-item,.post-card,.admin-post,.item-row{
+    display:block!important;
+    padding:1rem!important;
+    position:relative!important;
+  }
+  .post-text,.post-body,.post-content,.item-desc{
+    word-break:break-word!important;
+    white-space:normal!important;
+    width:100%!important;
+    display:block!important;
+    font-size:.875rem!important;
+    line-height:1.7!important;
+  }
+  .post-actions,.item-actions,.post-buttons{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:.5rem!important;
+    margin-top:1rem!important;
+    position:static!important;
+    width:100%!important;
+  }
+  .post-actions button,.item-actions button,
+  .btn-approve,.btn-delete,.btn-resolve,.btn-reject{
+    flex:1!important;
+    min-width:120px!important;
+    padding:.6rem .5rem!important;
+    font-size:.85rem!important;
+    position:static!important;
+    white-space:nowrap!important;
+    border-radius:8px!important;
+    margin:0!important;
+  }
+  .post-meta,.post-info,.item-meta{
+    font-size:.8rem!important;
+    word-break:break-word!important;
+    white-space:normal!important;
+    display:block!important;
+  }
+  .post-header,.item-header{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:.35rem!important;
+    margin-bottom:.5rem!important;
+  }
+}
+</style>
 </head>
 <body>
 <header class="navbar">

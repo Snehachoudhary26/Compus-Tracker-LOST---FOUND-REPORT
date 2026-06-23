@@ -490,22 +490,58 @@ async function handleSignup(e){e.preventDefault();const name=document.getElement
 buildConvList();
 </script>
 
+
+
+
+
+
+<!-- Mobile chat fix -->
 <script>
-// Mobile drawer - added for responsiveness only
 (function(){
-  var btn = document.getElementById('hamburger');
-  if(!btn) return;
-  var drawer = document.createElement('div');
-  drawer.id = 'mobileDrawer';
-  drawer.style.cssText = 'display:none;position:fixed;top:64px;left:0;right:0;background:#fff;border-bottom:3px solid #FF8A26;z-index:99999;flex-direction:column;padding:1rem 1.5rem 1.5rem;gap:.35rem;box-shadow:0 8px 32px rgba(0,0,0,.15);';
-  drawer.innerHTML = '<a href="index.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">🏠 Home</a><a href="lost.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">📦 Lost Items</a><a href="found.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">✅ Found Items</a><a href="match.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">🔍 Match Items</a><a href="messages.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">💬 Messages</a><a href="admin.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">🛠 Admin Panel</a><a href="notifications.html" style="display:block;padding:.7rem .75rem;font-size:1rem;font-weight:500;color:#334155;text-decoration:none;border-radius:8px;">🔔 Notifications</a><div style="display:flex;gap:.5rem;margin-top:.75rem;padding-top:.75rem;border-top:1px solid #e2e8f0;"><button onclick="openModal(\'loginModal\');document.getElementById(\'mobileDrawer\').style.display=\'none\';" style="flex:1;padding:.65rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;background:transparent;border:1.5px solid #e2e8f0;color:#334155;">Log In</button><button onclick="openModal(\'signupModal\');document.getElementById(\'mobileDrawer\').style.display=\'none\';" style="flex:1;padding:.65rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;background:#FF8A26;border:none;color:#fff;">Sign Up</button></div>';
-  document.body.appendChild(drawer);
-  btn.addEventListener('click', function(e){
-    e.stopPropagation();
-    drawer.style.display = drawer.style.display === 'flex' ? 'none' : 'flex';
-  });
+  function isMob(){ return window.innerWidth <= 768; }
+
+  function openChat(){
+    if(!isMob()) return;
+    var panel = document.querySelector('.chat-panel,.chat-main,.chat-area');
+    if(!panel) return;
+    panel.classList.add('active');
+    // Add back button
+    var head = panel.querySelector('.chat-head,.chat-header');
+    if(head && !document.getElementById('mob-back')){
+      var btn = document.createElement('button');
+      btn.id = 'mob-back';
+      btn.textContent = '← Back';
+      btn.style.cssText = 'background:none;border:none;font-size:1rem;font-weight:700;color:#FF8A26;cursor:pointer;margin-right:.5rem;flex-shrink:0;';
+      btn.onclick = function(){
+        panel.classList.remove('active');
+      };
+      head.insertBefore(btn, head.firstChild);
+    }
+    // Scroll to bottom
+    setTimeout(function(){
+      var msgs = panel.querySelector('.msgs,.messages-body,.chat-messages');
+      if(msgs) msgs.scrollTop = msgs.scrollHeight;
+    }, 200);
+  }
+
+  // Watch for DOM changes (when conversation loads)
+  var lastHTML = '';
+  setInterval(function(){
+    if(!isMob()) return;
+    var panel = document.querySelector('.chat-panel,.chat-main,.chat-area');
+    if(!panel) return;
+    var h = panel.innerHTML;
+    if(h !== lastHTML && h.length > 200 && !h.includes('Select a conversation')){
+      lastHTML = h;
+      openChat();
+    }
+  }, 300);
+
+  // Click on conv items
   document.addEventListener('click', function(e){
-    if(!drawer.contains(e.target) && e.target !== btn) drawer.style.display = 'none';
+    if(!isMob()) return;
+    var item = e.target.closest('.conv-item,.conversation-item,.conv-row,.ai-assistant-item');
+    if(item){ setTimeout(openChat, 300); }
   });
 })();
 </script>
