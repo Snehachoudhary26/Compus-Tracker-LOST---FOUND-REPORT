@@ -561,45 +561,23 @@ loadStats();
 
 
 
+
 <script>
 (function(){
-  var btn = document.getElementById('hamburger');
-  if(!btn) return;
-  // Remove old click handlers by cloning
-  var newBtn = btn.cloneNode(true);
-  btn.parentNode.replaceChild(newBtn, btn);
-  btn = newBtn;
-
-  // Remove existing drawer
-  var old = document.getElementById('mobDrawer');
-  if(old) old.remove();
-
-  var d = document.createElement('div');
-  d.id = 'mobDrawer';
-  d.className = 'mob-drawer';
-  d.innerHTML = `
-    <a href="index.html">🏠 Home</a>
-    <a href="lost.html">📦 Lost Items</a>
-    <a href="found.html">✅ Found Items</a>
-    <a href="match.html">🔍 Match Items</a>
-    <a href="messages.html">💬 Messages</a>
-    <a href="admin.html">🛠 Admin Panel</a>
-    <a href="notifications.html">🔔 Notifications</a>
-    <div class="mob-btns">
-      <button class="mob-login" onclick="openModal('loginModal');document.getElementById('mobDrawer').classList.remove('open')">Log In</button>
-      <button class="mob-signup" onclick="openModal('signupModal');document.getElementById('mobDrawer').classList.remove('open')">Sign Up</button>
-    </div>`;
-  document.body.appendChild(d);
-
-  btn.addEventListener('click', function(e){
-    e.stopPropagation();
-    d.classList.toggle('open');
-  });
-  document.addEventListener('click', function(e){
-    if(!d.contains(e.target) && e.target !== btn){
-      d.classList.remove('open');
-    }
-  });
+  function initDrawer(){
+    var btn = document.getElementById('hamburger');
+    if(!btn){ setTimeout(initDrawer, 100); return; }
+    var old = document.getElementById('mobDrawer');
+    if(old) old.remove();
+    var d = document.createElement('div');
+    d.id = 'mobDrawer';
+    d.className = 'mob-drawer';
+    d.innerHTML = '<a href="index.html">🏠 Home</a><a href="lost.html">📦 Lost Items</a><a href="found.html">✅ Found Items</a><a href="match.html">🔍 Match Items</a><a href="messages.html">💬 Messages</a><a href="admin.html">🛠 Admin Panel</a><a href="notifications.html">🔔 Notifications</a><div class="mob-btns"><button class="mob-login" onclick="openModal('loginModal');document.getElementById('mobDrawer').classList.remove('open')">Log In</button><button class="mob-signup" onclick="openModal('signupModal');document.getElementById('mobDrawer').classList.remove('open')">Sign Up</button></div>';
+    document.body.appendChild(d);
+    btn.onclick = function(e){ e.preventDefault(); e.stopPropagation(); d.classList.toggle('open'); };
+    document.addEventListener('click', function(e){ if(!d.contains(e.target)&&e.target!==btn) d.classList.remove('open'); });
+  }
+  document.addEventListener('DOMContentLoaded', initDrawer);
 })();
 </script>
 </body>
